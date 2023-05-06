@@ -2,20 +2,28 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const Users = require("./models/Users.model");
-const allowedOrigins = ["http://ip1"]; // substitua pelos IPs permitidos
+const whiteList = [
+    'http://localhost:9700',
+    'http://0.0.0.0:9700',
+    'http://192.168.1.163',
+    'https://inscricao.ipilmakarenko.ao',
+    'https://www.inscricao.ipilmakarenko.ao'
+]
 
-const whitelist = ["http://129.122.213.230", "http://192.168.1.163"];
-const corsOptions = {
-  origin: function (origin:any, callback:any) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-};
+const corsOption = {
+    origin: (origin, callback) => {
+        if (whiteList.indexOf(origin) !== -1)
+            callback(null, true)
+        else            
+            callback('403')
+    },
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    Credential: true
+}
+
+//app.use(cors(corsOption)); //disabled cors options
 app.use(express.json());
-app.use(cors(corsOptions));
+//app.use(cors(corsOption));
 
 app.use("/", (req: any, res: any) => {
   return res.status(200).json("ola Ruben André");
